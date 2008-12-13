@@ -20,19 +20,27 @@
   color: white;
 }
 
+#searchy .result
+{
+  padding: 4px 8px;
+}
+
 #searchy .result[current=true]
 {
-  background: #888;
+  background: #000;
+  -moz-border-radius: 4px;
 }
 
-#searchy .result label
+#searchy .result .title
 {
-  font-size: 1.2em;
+  font-size: 1.5em;
+}
+#searchy .result .bold
+{
+  font-weight: bold;
 }
 
-#searchy .result description
+#searchy .result .description
 {
-  font-size: 0.9em;
-  padding-left: 50px;
-  padding-right: 50px;
+  padding: 5px 25px;
 }

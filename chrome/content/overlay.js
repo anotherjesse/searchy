@@ -104,13 +104,16 @@ var searchy = new function() {
           var vbox = document.createElement('vbox');
           vbox.setAttribute('class', 'result');
           vbox.setAttribute('href', result.clickurl);
-          var label = document.createElement('label');
-          label.setAttribute('value', result.title);
-          vbox.appendChild(label);
-          var description = document.createElement('description');
-          description.appendChild(document.createTextNode(result.abstract));
+          var title = document.createElementNS("http://www.w3.org/1999/xhtml","html:div");
+          title.setAttribute('class', 'title');
+          appendHTMLtoXUL(result.title, title);
+          vbox.appendChild(title);
+          var description = document.createElementNS("http://www.w3.org/1999/xhtml","html:div");
+          description.setAttribute('class', 'description');
+          appendHTMLtoXUL(result.abstract, description);
           vbox.appendChild(description);
           box.appendChild(vbox);
+
           if (!current) {
             vbox.setAttribute('current', true);
             current = vbox;
@@ -120,4 +123,20 @@ var searchy = new function() {
     }
   }
 
+  function appendHTMLtoXUL(html, node) {
+    html.split(/<b>(.*?<\/b>)|([^<]*)/).forEach(
+      function(text) {
+        var span = document.createElementNS("http://www.w3.org/1999/xhtml","html:span");
+        if (text.match(/<\/b>$/)) {
+          span.setAttribute('class', 'bold');
+          text = text.slice(0, text.length - 4);
+        }
+        text = text.replace(/&gt;/g, '>');
+        text = text.replace(/&lt;/g, '<');
+        text = text.replace(/&amp;/g, '&');
+
+        span.appendChild(document.createTextNode(text));
+        node.appendChild(span);
+      });
+  }
 };

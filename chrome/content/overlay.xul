@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet type="text/css" href="chrome://searchy/skin/overlay.css"?>
+
+<overlay id="searchyOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="chrome://searchy/content/overlay.js" />
+
+  <menupopup id="menu_ToolsPopup">
+    <menuitem label="Searchy" command="cmd_showSearchy" />
+  </menupopup>
+
+  <toolbox id="navigator-toolbox">
+    <panel id="searchy"
+           onpopupshown="searchy.focused()"
+           onpopuphiding="searchy.hidden()">
+      <vbox flex="1">
+        <hbox id="searchy-bar">
+          <label value="Search" />
+          <textbox id="searchy-input"
+                   value=""
+                   oninput="searchy.input(event)"
+                   class="plain"
+                   flex="1" />
+      </hbox>
+        <vbox id="searchy-results" />
+      </vbox>
+    </panel>
+  </toolbox>
+
+  <keyset id="mainKeyset">
+      <key id="key_searchy"
+          key="K"
+          command="cmd_showSearchy"
+          modifiers="accel shift"/>
+  </keyset>
+
+  <commandset id="mainCommandSet">
+    <command id="cmd_showSearchy" oncommand="searchy.go(event)" />
+  </commandset>
+
+</overlay>
+

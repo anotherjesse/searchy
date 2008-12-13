@@ -1,0 +1,38 @@
+#searchy-bar {
+  padding: 5px 2px;
+}
+
+#searchy-bar textbox {
+  font-size: 20px;
+}
+
+#searchy-bar label {
+  padding-top: 5px;
+}
+
+#searchy {
+  padding: 10px 8px 6px 8px;
+  margin-top: 4px;
+  -moz-appearance: none;
+  background-color: rgba(68,68,68,0.95);
+  border: 1px solid rgba(255,255,255,0.15);
+  -moz-border-radius: 4px;
+  color: white;
+}
+
+#searchy .result[current=true]
+{
+  background: #888;
+}
+
+#searchy .result label
+{
+  font-size: 1.2em;
+}
+
+#searchy .result description
+{
+  font-size: 0.9em;
+  padding-left: 50px;
+  padding-right: 50px;
+}

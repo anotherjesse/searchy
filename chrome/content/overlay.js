@@ -55,9 +55,17 @@ var searchy = new function() {
     window.removeEventListener('keypress', inputlistener, true);
   };
 
+  function currentHost() {
+    return gBrowser.selectedBrowser.webNavigation.currentURI.host;
+  }
+
   function urlFor(search) {
     var base = "http://boss.yahooapis.com/ysearch/web/v1/%QUERY%?start=0&count=10&filter=-hate-porn&appid=" +
       "QyNODEPV34HR033oKtxhT739.BxdON8LsJp7ZavlLzMA2MwaozRCruycKu8FAVjA";
+
+    if (search[0] == '.') {
+      search = search.slice(1) + " site:" + currentHost();
+    }
 
     return base.replace('%QUERY%', encodeURIComponent(search));
   }

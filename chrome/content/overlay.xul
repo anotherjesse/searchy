@@ -23,7 +23,7 @@
                    oninput="searchy.input(event)"
                    class="plain"
                    flex="1" />
-      </hbox>
+        </hbox>
         <vbox id="searchy-results" />
       </vbox>
     </panel>

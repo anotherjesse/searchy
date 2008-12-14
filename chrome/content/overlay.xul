@@ -26,6 +26,18 @@
                    flex="1" />
         </hbox>
         <vbox id="searchy-results" />
+        <hbox id="searchy-details">
+          <description id="searchy-no-results" hidden="true">No results returned</description>
+          <vbox id="searchy-help">
+            <description>Start typing to search the web, results will appear here.</description>
+            <description>To search only this site start your query with @</description>
+          </vbox>
+          <spacer flex="1" />
+          <vbox>
+            <spacer flex="1" />
+            <label id="searchy-author" value="by overstimulate" onclick="searchy.about()" />
+          </vbox>
+        </hbox>
       </vbox>
     </panel>
   </toolbox>

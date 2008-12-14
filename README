@@ -29,4 +29,4 @@ RELEASE
  - [X] deal with exceptions
  - [X] emptying the query should empty the search terms
  - [ ] deal with shortcut key conflicts
- - [ ] if no results show helpful messages
+ - [X] if no results show helpful messages

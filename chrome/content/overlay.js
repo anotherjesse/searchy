@@ -11,6 +11,11 @@ var searchy = new function() {
     panel.focus();
   };
 
+  this.about = function() {
+    $('searchy').hidePopup();
+    openUILinkIn('http://overstimulate.com/projects/searchy', 'tab');
+  };
+
   var timer;
 
   this.input = function(aEvent) {
@@ -21,7 +26,11 @@ var searchy = new function() {
       clearTimeout(timer);
     }
 
-    $('searchy-input').setAttribute('busy', 'true');
+    if ($('searchy-input').value == '') {
+      return help();
+    }
+
+    busy();
 
     timer = setTimeout(
               function() {
@@ -122,14 +131,39 @@ var searchy = new function() {
 
   var current;
 
+  function noresults() {
+    done();
+    $('searchy-no-results').hidden = false;
+    $('searchy-help').hidden = true;
+  }
+
+  function help() {
+    done();
+    $('searchy-no-results').hidden = true;
+    $('searchy-help').hidden = false;
+  }
+
+  function busy() {
+    $('searchy-input').setAttribute('busy', true);
+    $('searchy-no-results').hidden = true;
+    $('searchy-help').hidden = true;
+  }
+
+  function done() {
+    $('searchy-input').removeAttribute('busy');
+    $('searchy-no-results').hidden = true;
+    $('searchy-help').hidden = true;
+    var box = $('searchy-results');
+    while (box.firstChild) {
+      box.removeChild(box.firstChild);
+    }
+  }
+
   function process() {
     if ((req.readyState == 4) && (req.status == 200)) {
+      done();
 
-      $('searchy-input').removeAttribute('busy');
       var box = $('searchy-results');
-      while (box.firstChild) {
-        box.removeChild(box.firstChild);
-      }
 
       try {
         var nsJSON = Cc["@mozilla.org/dom/json;1"]
@@ -138,14 +172,18 @@ var searchy = new function() {
         var json = nsJSON.decode(req.responseText);
 
         if (!json.ysearchresponse.resultset_web) {
-          return;
+          return noresults();
         }
       }
       catch (e) {
-        return;
+        return noresults();
       }
 
       current = null;
+
+      if (json.ysearchresponse.resultset_web.length == 0) {
+        return noresults();
+      }
 
       json.ysearchresponse.resultset_web.forEach(
         function(result) {

@@ -136,6 +136,10 @@ var searchy = new function() {
           .createInstance(Ci.nsIJSON);
 
         var json = nsJSON.decode(req.responseText);
+
+        if (!json.ysearchresponse.resultset_web) {
+          return;
+        }
       }
       catch (e) {
         return;

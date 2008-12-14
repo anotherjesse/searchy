@@ -4,6 +4,8 @@ var searchy = new function() {
     .getService(Ci.nsIPrefService)
     .getBranch('extensions.searchy.');
 
+  prefs.QueryInterface(Ci.nsIPrefBranch2);
+
   var $ = function(x) { return document.getElementById(x); };
 
   var req;
@@ -49,20 +51,37 @@ var searchy = new function() {
 
     /* update key bindings */
 
-    function update(key_id, attribute) {
-      try {
-        if (prefs.getPrefType(attribute)) {
-          var val = prefs.getCharPref(attribute);
-          if (val && val.length > 0) {
-            var binding = document.getElementById(key_id);
-            binding.setAttribute(attribute, val);
-          }
+    var updateShortcut = {
+      observe: function() {
+        function update(key_id, attribute) {
+          try {
+            if (prefs.getPrefType(attribute)) {
+              var val = prefs.getCharPref(attribute);
+              if (val && val.length > 0) {
+                var binding = document.getElementById(key_id);
+                binding.setAttribute(attribute, val);
+              }
+            }
+          } catch (e) {dump(e)}
         }
-      } catch (e) {}
+
+        update('key_searchy', 'key');
+        update('key_searchy', 'modifiers');
+      }
+    };
+
+    updateShortcut.observe();
+
+    /* and update the key whenever the prefs change */
+
+/*    prefs.addObserver('', updateShortcut, false);
+
+    function uninit() {
+      prefs.removeObserver('', updateShortcut, false);
+      window.removeEventListener('unload', uninit, false);
     }
 
-    update('key_searchy', 'key');
-    update('key_searchy', 'modifiers');
+    window.addEventListener('unload', uninit, false); */
   }
 
   window.addEventListener('load', init, false);

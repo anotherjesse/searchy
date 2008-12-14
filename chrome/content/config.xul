@@ -31,5 +31,6 @@
                   id="modifier-shift" />
       </hbox>
     </groupbox>
+    <description>Changes only affect new windows</description>
   </vbox>
 </dialog>

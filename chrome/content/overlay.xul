@@ -39,10 +39,11 @@
     </panel>
   </toolbox>
 
-  <keyset>
+  <keyset id="mainKeyset">
       <key id="key_searchy"
           key="K"
           command="cmd_showSearchy"
+          position="1"
           modifiers="accel shift"/>
   </keyset>
 

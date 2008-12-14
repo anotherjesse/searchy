@@ -22,9 +22,9 @@ query with @
 RELEASE
 =======
  - [X] support clicking on the results
+ - [X] add a timeout before search on keystroke (250ms)
  - [ ] figure out why yahoo sometimes sends us to an https without valid cert
  - [X] change from . to @
- - [ ] add a timeout before search on keystroke
  - [ ] handle search failures & deal with exceptions
  - [ ] emptying the query should empty the search terms
  - [ ] deal with shortcut key conflicts

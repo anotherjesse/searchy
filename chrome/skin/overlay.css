@@ -10,6 +10,11 @@
   padding-top: 5px;
 }
 
+#searchy-input[busy="true"]
+{
+  background: #fff url(spinner.gif) no-repeat center right;
+}
+
 #searchy {
   padding: 10px 8px 6px 8px;
   margin-top: 4px;

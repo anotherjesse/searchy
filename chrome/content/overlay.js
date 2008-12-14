@@ -11,8 +11,22 @@ var searchy = new function() {
     panel.focus();
   };
 
+  var timer;
+
   this.input = function(aEvent) {
-    query($('searchy-input').value);
+    if (req) {
+      req.abort();
+    }
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    $('searchy-input').setAttribute('busy', 'true');
+
+    timer = setTimeout(
+              function() {
+                query($('searchy-input').value);
+              }, 250);
   };
 
   function visit(node, aEvent) {
@@ -110,6 +124,7 @@ var searchy = new function() {
 
   function process() {
     if ((req.readyState == 4) && (req.status == 200)) {
+      $('searchy-input').removeAttribute('busy');
       var nsJSON = Cc["@mozilla.org/dom/json;1"]
         .createInstance(Ci.nsIJSON);
 

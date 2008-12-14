@@ -15,31 +15,43 @@ var searchy = new function() {
     query($('searchy-input').value);
   };
 
+  function visit(node, aEvent) {
+    select(node);
+
+    var url = node.getAttribute('href');
+    $('searchy').hidePopup();
+    if (aEvent) {
+      var where = whereToOpenLink(aEvent);
+    }
+    else {
+      var where = 'current';
+    }
+    openUILinkIn(url, where);
+  }
+
+  function select(node) {
+    if (current && node) {
+      current.removeAttribute('current');
+    }
+    if (node) {
+      current = node;
+      current.setAttribute('current', true);
+    }
+  }
+
   function inputlistener(aEvent) {
     switch (aEvent.keyCode) {
-
-    case aEvent.DOM_VK_RETURN:
-      var url = current.getAttribute('href');
-      $('searchy').hidePopup();
-      var where = whereToOpenLink(aEvent);
-      openUILinkIn(url, where);
-      break;
-    case aEvent.DOM_VK_UP:
-      if (current && current.previousSibling) {
-        current.removeAttribute('current');
-        current = current.previousSibling;
-        current.setAttribute('current', true);
-      }
-      break;
-    case aEvent.DOM_VK_DOWN:
-      if (current && current.nextSibling) {
-        current.removeAttribute('current');
-        current = current.nextSibling;
-        current.setAttribute('current', true);
-      }
-      break;
-    default:
-      return;
+      case aEvent.DOM_VK_RETURN:
+        visit(current, aEvent);
+        break;
+      case aEvent.DOM_VK_UP:
+        if (current) { select(current.previousSibling); }
+        break;
+      case aEvent.DOM_VK_DOWN:
+        if (current) { select(current.nextSibling); }
+        break;
+      default:
+        return;
     }
 
     aEvent.stopPropagation();
@@ -121,7 +133,7 @@ var searchy = new function() {
           vbox.appendChild(title);
           var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
           description.setAttribute('class', 'description');
-          appendHTMLtoXUL(result.abstract, description);
+          appendHTMLtoXUL(result['abstract'], description);
           vbox.appendChild(description);
           box.appendChild(vbox);
 
@@ -129,6 +141,8 @@ var searchy = new function() {
             vbox.setAttribute('current', true);
             current = vbox;
           }
+
+          vbox.onclick = function(event) { visit(this, event); };
         });
 
     }

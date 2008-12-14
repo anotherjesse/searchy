@@ -21,12 +21,11 @@ query with @
 
 RELEASE
 =======
- - [ ] support clicking on the results
- - [ ] figure out why yahoo sometimes sends us to an https site without a certification
+ - [X] support clicking on the results
+ - [ ] figure out why yahoo sometimes sends us to an https without valid cert
  - [X] change from . to @
  - [ ] add a timeout before search on keystroke
  - [ ] handle search failures & deal with exceptions
  - [ ] emptying the query should empty the search terms
- - [ ] deal with shortcut key
-
+ - [ ] deal with shortcut key conflicts
  - [ ] if no results show helpful messages

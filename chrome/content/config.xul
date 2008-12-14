@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        title="Searchy Settings"
+        id="searchyConfig"
+        width="400"
+        height="400"
+        onload="init()"
+        ondialogaccept="save();"
+        buttons="cancel,accept">
+
+  <script type="text/javascript" src="config.js"></script>
+
+  <vbox>
+    <dialogheader title="Searchy" description="Key Combo" />
+    <groupbox>
+      <description>Choose a combo that isn't already taken.</description>
+      <label value="Key (1 character)" />
+      <hbox>
+        <textbox id="key" maxlength="1" length="1" width="20"/>
+        <spacer flex="1" />
+      </hbox>
+      <label value="Modifiers" />
+      <hbox>
+        <checkbox label="Accel"
+                  id="modifier-accel" />
+        <checkbox label="Alt"
+                  id="modifier-alt" />
+        <checkbox label="Shift"
+                  id="modifier-shift" />
+      </hbox>
+    </groupbox>
+  </vbox>
+</dialog>

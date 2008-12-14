@@ -51,8 +51,8 @@ var searchy = new function() {
 
     function update(key_id, attribute) {
       try {
-        if (prefs.getPrefType(key_id + '.' + attribute)) {
-          var val = prefs.getCharPref(key_id + '.' + attribute);
+        if (prefs.getPrefType(attribute)) {
+          var val = prefs.getCharPref(attribute);
           if (val && val.length > 0) {
             var binding = document.getElementById(key_id);
             binding.setAttribute(attribute, val);

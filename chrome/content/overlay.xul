@@ -39,7 +39,7 @@
     </panel>
   </toolbox>
 
-  <keyset id="mainKeyset">
+  <keyset>
       <key id="key_searchy"
           key="K"
           command="cmd_showSearchy"

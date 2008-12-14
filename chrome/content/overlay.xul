@@ -18,7 +18,7 @@
            onpopuphiding="searchy.hidden()">
       <vbox flex="1">
         <hbox id="searchy-bar">
-          <label value="Search" />
+          <label value="Searchy:" />
           <textbox id="searchy-input"
                    value=""
                    oninput="searchy.input(event)"

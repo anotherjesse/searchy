@@ -14,7 +14,7 @@
   padding: 10px 8px 6px 8px;
   margin-top: 4px;
   -moz-appearance: none;
-  background-color: rgba(68,68,68,0.95);
+  background-color: rgba(44,44,44,0.95);
   border: 1px solid rgba(255,255,255,0.15);
   -moz-border-radius: 4px;
   color: white;
@@ -38,6 +38,7 @@
 #searchy .result .bold
 {
   font-weight: bold;
+  font-size: 1.1em;
 }
 
 #searchy .result .description

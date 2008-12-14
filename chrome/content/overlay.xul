@@ -8,10 +8,6 @@
 
   <script type="application/x-javascript" src="chrome://searchy/content/overlay.js" />
 
-  <menupopup id="menu_ToolsPopup">
-    <menuitem label="Searchy" command="cmd_showSearchy" />
-  </menupopup>
-
   <toolbox id="navigator-toolbox">
     <panel id="searchy"
            onpopupshown="searchy.focused()"
@@ -51,7 +47,7 @@
   </keyset>
 
   <commandset id="mainCommandSet">
-    <command id="cmd_showSearchy" oncommand="searchy.go(event)" />
+    <command id="cmd_showSearchy" oncommand="searchy.show(event)" />
   </commandset>
 
 </overlay>

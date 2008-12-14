@@ -1,4 +1,9 @@
 var searchy = new function() {
+
+  var prefs = Cc['@mozilla.org/preferences-service;1']
+    .getService(Ci.nsIPrefService)
+    .getBranch('extensions.searchy.');
+
   var $ = function(x) { return document.getElementById(x); };
 
   var req;
@@ -6,7 +11,63 @@ var searchy = new function() {
   var queried;
   var timer;
 
-  this.go = function() {
+  function init() {
+
+    /* don't leak */
+
+    window.removeEventListener('load', init, false);
+
+    /* pop a tab if there is anything to tell the user about */
+
+    function welcome() {
+      var version = Cc["@mozilla.org/extensions/manager;1"]
+        .getService(Ci.nsIExtensionManager)
+        .getItemForID("searchy@overstimulate.com")
+        .version;
+
+      var pageURL;
+      var lastVersion;
+
+      if (prefs.getPrefType('lastversion')) {
+        lastVersion = prefs.getCharPref('lastversion');
+      }
+
+      if (!lastVersion) {
+        pageURL = "http://overstimulate.com/projects/searchy/welcome?" + version;
+      } else if (lastVersion != version) {
+        pageURL = "http://overstimulate.com/projects/searchy/upgrade?" + version;
+      }
+
+      if (pageURL) {
+        setTimeout(function(){ window.openUILinkIn(pageURL, "tab"); }, 500);
+      }
+
+      prefs.setCharPref("lastversion", version);
+    }
+
+    welcome();
+
+    /* update key bindings */
+
+    function update(key_id, attribute) {
+      try {
+        if (prefs.getPrefType(key_id + '.' + attribute)) {
+          var val = prefs.getCharPref(key_id + '.' + attribute);
+          if (val && val.length > 0) {
+            var binding = document.getElementById(key_id);
+            binding.setAttribute(attribute, val);
+          }
+        }
+      } catch (e) {}
+    }
+
+    update('key_searchy', 'key');
+    update('key_searchy', 'modifiers');
+  }
+
+  window.addEventListener('load', init, false);
+
+  this.show = function() {
     var panel = $('searchy');
     var width = Math.min(document.width - 40, 800);
     panel.setAttribute('width', width);
@@ -101,14 +162,17 @@ var searchy = new function() {
   };
 
   function currentHost() {
-    return gBrowser.selectedBrowser.webNavigation.currentURI.host;
+    try {
+      return gBrowser.selectedBrowser.webNavigation.currentURI.host;
+    }
+    catch (e) {}
   }
 
   function urlFor(search) {
     var base = "http://boss.yahooapis.com/ysearch/web/v1/%QUERY%?start=0&count=10&filter=-hate-porn&appid=" +
       "UcSRSJ3IkY_96KMNLeH7xYHENwP91FyV0A--";
 
-    if (search[0] == '@') {
+    if ((search[0] == '@') && currentHost()) {
       search = search.slice(1) + " site:" + currentHost();
     }
 
@@ -152,8 +216,6 @@ var searchy = new function() {
     if (req && (req.xhr.readyState == 4) && (req.xhr.status == 200)) {
       done();
 
-      var box = $('searchy-results');
-
       try {
         var nsJSON = Cc["@mozilla.org/dom/json;1"]
           .createInstance(Ci.nsIJSON);
@@ -174,6 +236,8 @@ var searchy = new function() {
       if (json.ysearchresponse.resultset_web.length == 0) {
         return noresults();
       }
+
+      var box = $('searchy-results');
 
       json.ysearchresponse.resultset_web.forEach(
         function(result) {

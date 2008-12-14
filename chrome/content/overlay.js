@@ -124,15 +124,21 @@ var searchy = new function() {
 
   function process() {
     if ((req.readyState == 4) && (req.status == 200)) {
+
       $('searchy-input').removeAttribute('busy');
-      var nsJSON = Cc["@mozilla.org/dom/json;1"]
-        .createInstance(Ci.nsIJSON);
-
-      var json = nsJSON.decode(req.responseText);
-
       var box = $('searchy-results');
       while (box.firstChild) {
         box.removeChild(box.firstChild);
+      }
+
+      try {
+        var nsJSON = Cc["@mozilla.org/dom/json;1"]
+          .createInstance(Ci.nsIJSON);
+
+        var json = nsJSON.decode(req.responseText);
+      }
+      catch (e) {
+        return;
       }
 
       current = null;

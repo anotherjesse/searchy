@@ -30,3 +30,4 @@ RELEASE
  - [X] emptying the query should empty the search terms
  - [ ] deal with shortcut key conflicts
  - [X] if no results show helpful messages
+ - [X] don't allow enter until search completes

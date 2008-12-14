@@ -2,6 +2,9 @@ var searchy = new function() {
   var $ = function(x) { return document.getElementById(x); };
 
   var req;
+  var current;
+  var queried;
+  var timer;
 
   this.go = function() {
     var panel = $('searchy');
@@ -16,15 +19,9 @@ var searchy = new function() {
     openUILinkIn('http://overstimulate.com/projects/searchy', 'tab');
   };
 
-  var timer;
-
   this.input = function(aEvent) {
-    if (req) {
-      req.abort();
-    }
-    if (timer) {
-      clearTimeout(timer);
-    }
+    if (req) req.abort();
+    if (timer) clearTimeout(timer);
 
     if ($('searchy-input').value == '') {
       return help();
@@ -65,7 +62,9 @@ var searchy = new function() {
   function inputlistener(aEvent) {
     switch (aEvent.keyCode) {
       case aEvent.DOM_VK_RETURN:
-        visit(current, aEvent);
+        if (queried == $('searchy-input').value) {
+          visit(current, aEvent);
+        }
         break;
       case aEvent.DOM_VK_UP:
         if (current) { select(current.previousSibling); }
@@ -88,7 +87,7 @@ var searchy = new function() {
   };
 
   this.hidden = function() {
-    if (req) { req.abort(); }
+    if (req) req.abort();
     window.removeEventListener('keypress', inputlistener, true);
 
     /* because the MAC doesn't redraw xul that has a panel over it you are left with crap */
@@ -117,19 +116,9 @@ var searchy = new function() {
   }
 
   function query(input) {
-    if (req) {
-      req.abort();
-    }
-
-    req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-      .createInstance(Ci.nsIXMLHttpRequest);
-    req.mozBackgroundRequest = true;
-    req.open("GET", urlFor(input));
-    req.onreadystatechange = process;
-    req.send(null);
+    if (req) req.abort();
+    req = new Request(input);
   }
-
-  var current;
 
   function noresults() {
     done();
@@ -160,7 +149,7 @@ var searchy = new function() {
   }
 
   function process() {
-    if ((req.readyState == 4) && (req.status == 200)) {
+    if (req && (req.xhr.readyState == 4) && (req.xhr.status == 200)) {
       done();
 
       var box = $('searchy-results');
@@ -169,7 +158,7 @@ var searchy = new function() {
         var nsJSON = Cc["@mozilla.org/dom/json;1"]
           .createInstance(Ci.nsIJSON);
 
-        var json = nsJSON.decode(req.responseText);
+        var json = nsJSON.decode(req.xhr.responseText);
 
         if (!json.ysearchresponse.resultset_web) {
           return noresults();
@@ -180,6 +169,7 @@ var searchy = new function() {
       }
 
       current = null;
+      queried = req.input;
 
       if (json.ysearchresponse.resultset_web.length == 0) {
         return noresults();
@@ -210,6 +200,20 @@ var searchy = new function() {
 
     }
   }
+
+  function Request(input)  {
+    var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+      .createInstance(Ci.nsIXMLHttpRequest);
+    xhr.mozBackgroundRequest = true;
+    xhr.open("GET", urlFor(input));
+    xhr.onreadystatechange = process;
+    xhr.send(null);
+
+    this.input = input;
+    this.abort = function() { xhr.abort(); };
+    this.xhr = xhr;
+  }
+
 
   function appendHTMLtoXUL(html, node) {
     html.split(/<b>(.*?<\/b>)|([^<]*)/).forEach(

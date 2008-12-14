@@ -4,7 +4,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest">
     <em:name>Searchy</em:name>
     <em:id>searchy@overstimulate.com</em:id>
-    <em:version>BUILD</em:version>
+    <em:version>0.1</em:version>
     <em:homepageURL>http://overstimulate.com/projects/searchy</em:homepageURL>
     <em:description>Quick access to search results</em:description>
     <em:optionsURL>chrome://searchy/content/config.xul</em:optionsURL>

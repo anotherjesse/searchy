@@ -7,7 +7,7 @@ var searchy = new function() {
     var panel = $('searchy');
     var width = Math.min(document.width - 40, 800);
     panel.setAttribute('width', width);
-    panel.openPopup(document.getElementById('content'), 'overlap', (document.width-width)/2, 20);
+    panel.openPopup(null, 'overlap', (document.width-width)/2, 20);
     panel.focus();
   };
 
@@ -55,6 +55,15 @@ var searchy = new function() {
   this.hidden = function() {
     if (req) { req.abort(); }
     window.removeEventListener('keypress', inputlistener, true);
+
+    /* because the MAC doesn't redraw xul that has a panel over it you are left with crap */
+    var win = window;
+    setTimeout(function() {
+                 var wu = win.QueryInterface(Ci.nsIInterfaceRequestor)
+                   .getInterface(Ci.nsIDOMWindowUtils);
+                 wu.redraw();
+               }, 10);
+
   };
 
   function currentHost() {
@@ -65,7 +74,7 @@ var searchy = new function() {
     var base = "http://boss.yahooapis.com/ysearch/web/v1/%QUERY%?start=0&count=10&filter=-hate-porn&appid=" +
       "QyNODEPV34HR033oKtxhT739.BxdON8LsJp7ZavlLzMA2MwaozRCruycKu8FAVjA";
 
-    if (search[0] == '.') {
+    if (search[0] == '@') {
       search = search.slice(1) + " site:" + currentHost();
     }
 

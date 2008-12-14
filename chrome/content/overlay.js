@@ -106,7 +106,7 @@ var searchy = new function() {
 
   function urlFor(search) {
     var base = "http://boss.yahooapis.com/ysearch/web/v1/%QUERY%?start=0&count=10&filter=-hate-porn&appid=" +
-      "QyNODEPV34HR033oKtxhT739.BxdON8LsJp7ZavlLzMA2MwaozRCruycKu8FAVjA";
+      "UcSRSJ3IkY_96KMNLeH7xYHENwP91FyV0A--";
 
     if (search[0] == '@') {
       search = search.slice(1) + " site:" + currentHost();
@@ -180,6 +180,7 @@ var searchy = new function() {
           var vbox = document.createElement('vbox');
           vbox.setAttribute('class', 'result');
           vbox.setAttribute('href', result.clickurl);
+          vbox.setAttribute('tooltiptext', result.dispurl);
           var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
           title.setAttribute('class', 'title');
           appendHTMLtoXUL(result.title, title);

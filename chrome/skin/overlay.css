@@ -19,7 +19,7 @@
   padding: 10px 8px 6px 8px;
   margin-top: 4px;
   -moz-appearance: none;
-  background-color: rgba(44,44,44,0.95);
+  background-color: rgba(22,22,22,0.90);
   border: 1px solid rgba(255,255,255,0.15);
   -moz-border-radius: 4px;
   color: white;
@@ -27,35 +27,37 @@
 
 #searchy .result
 {
-  padding: 4px 8px;
+  border: 1px solid transparent;
+  padding: 3px 9px;
 }
 
 #searchy .result[current=true]
 {
   background: #000;
   -moz-border-radius: 4px;
+  border: 1px solid #888;
 }
 
 #searchy .result .title
 {
-  font-size: 1.5em;
+  font-size: 1.3em;
 }
 #searchy .result .bold
 {
   font-weight: bold;
-  font-size: 1.1em;
+  color: #ffa;
 }
 
 #searchy .result .description
 {
-  padding: 5px 25px;
+  padding: 0 25px 5px 25px;
 }
 
 #searchy #searchy-help,
 #searchy #searchy-no-results
 {
   font-size: 1.2em;
-  margin-left: 50px;
+  margin-left: 10px;
   margin-top: 5px;
 }
 

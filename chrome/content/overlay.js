@@ -188,8 +188,7 @@ var searchy = new function() {
   }
 
   function urlFor(search) {
-    var base = "http://boss.yahooapis.com/ysearch/web/v1/%QUERY%?start=0&count=10&filter=-hate-porn&appid=" +
-      "UcSRSJ3IkY_96KMNLeH7xYHENwP91FyV0A--";
+    var base = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%QUERY%";
 
     if ((search[0] == '@') && currentHost()) {
       search = search.slice(1) + " site:" + currentHost();
@@ -207,24 +206,28 @@ var searchy = new function() {
     done();
     $('searchy-no-results').hidden = false;
     $('searchy-help').hidden = true;
+    $('searchy-about-results').hidden = true;
   }
 
   function help() {
     done();
     $('searchy-no-results').hidden = true;
     $('searchy-help').hidden = false;
+    $('searchy-about-results').hidden = true;
   }
 
   function busy() {
     $('searchy-input').setAttribute('busy', true);
     $('searchy-no-results').hidden = true;
     $('searchy-help').hidden = true;
+    $('searchy-about-results').hidden = true;
   }
 
   function done() {
     $('searchy-input').removeAttribute('busy');
     $('searchy-no-results').hidden = true;
     $('searchy-help').hidden = true;
+    $('searchy-about-results').hidden = false;
     var box = $('searchy-results');
     while (box.firstChild) {
       box.removeChild(box.firstChild);
@@ -241,7 +244,7 @@ var searchy = new function() {
 
         var json = nsJSON.decode(req.xhr.responseText);
 
-        if (!json.ysearchresponse.resultset_web) {
+        if (!json.responseData.results) {
           return noresults();
         }
       }
@@ -252,26 +255,31 @@ var searchy = new function() {
       current = null;
       queried = req.input;
 
-      if (json.ysearchresponse.resultset_web.length == 0) {
+      if (json.responseData.results.length == 0) {
         return noresults();
       }
 
       var box = $('searchy-results');
 
-      json.ysearchresponse.resultset_web.forEach(
+      $('searchy-about-results').value = "Estimated Results: " + json.responseData.cursor.estimatedResultCount;
+
+      json.responseData.results.forEach(
         function(result) {
           var vbox = document.createElement('vbox');
           vbox.setAttribute('class', 'result');
-          vbox.setAttribute('href', result.clickurl);
-          vbox.setAttribute('tooltiptext', result.dispurl);
+          vbox.setAttribute('href', result.unescapedUrl);
           var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
           title.setAttribute('class', 'title');
           appendHTMLtoXUL(result.title, title);
           vbox.appendChild(title);
           var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
           description.setAttribute('class', 'description');
-          appendHTMLtoXUL(result['abstract'], description);
+          appendHTMLtoXUL(result['content'], description);
           vbox.appendChild(description);
+          var url = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
+          url.setAttribute('class', 'url');
+          appendHTMLtoXUL(result.unescapedUrl, url);
+          vbox.appendChild(url);
           box.appendChild(vbox);
 
           if (!current) {
@@ -290,6 +298,7 @@ var searchy = new function() {
       .createInstance(Ci.nsIXMLHttpRequest);
     xhr.mozBackgroundRequest = true;
     xhr.open("GET", urlFor(input));
+    xhr.setRequestHeader("Referer", "http://overstimulate.com/projects/searchy");
     xhr.onreadystatechange = process;
     xhr.send(null);
 
@@ -318,7 +327,7 @@ var searchy = new function() {
         text = text.replace(/&#(\d+);/g, function() { return String.fromCharCode(RegExp.$1); });
 
         /* convert some of the more popular XML entities in text */
-        text = text.replace(/&quote;/g, '"');
+        text = text.replace(/&quot;/g, '"');
         text = text.replace(/&gt;/g, '>');
         text = text.replace(/&lt;/g, '<');
         text = text.replace(/&amp;/g, '&');

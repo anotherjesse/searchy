@@ -15,7 +15,8 @@
   background: #fff url(spinner.gif) no-repeat center right;
 }
 
-#searchy {
+#searchy
+{
   padding: 10px 8px 6px 8px;
   margin-top: 4px;
   -moz-appearance: none;
@@ -29,6 +30,7 @@
 {
   border: 1px solid transparent;
   padding: 3px 9px;
+  margin-bottom: 5px;
 }
 
 #searchy .result[current=true]
@@ -41,16 +43,30 @@
 #searchy .result .title
 {
   font-size: 1.3em;
+  padding-bottom: 5px;
+  color: #ffa;
+  max-height: 1em;
+  overflow: hidden;
 }
+
 #searchy .result .bold
 {
   font-weight: bold;
-  color: #ffa;
 }
 
 #searchy .result .description
 {
-  padding: 0 25px 5px 25px;
+  padding-bottom: 5px;
+}
+
+#searchy .result .url
+{
+  padding-bottom: 5px;
+  color: #08f;
+  text-decoration: underline;
+  max-height: 1em;
+  line-height: 1em;
+  overflow: hidden;
 }
 
 #searchy #searchy-help,

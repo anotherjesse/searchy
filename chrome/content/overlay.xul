@@ -23,6 +23,7 @@
         </hbox>
         <vbox id="searchy-results" />
         <hbox id="searchy-details">
+          <description id="searchy-about-results" hidden="true" />
           <description id="searchy-no-results" hidden="true">No results returned</description>
           <vbox id="searchy-help">
             <description>Start typing to search the web, results will appear here</description>

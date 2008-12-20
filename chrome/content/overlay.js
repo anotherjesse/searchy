@@ -49,15 +49,7 @@ var searchy = new function() {
     title.setAttribute('class', 'title');
     appendHTMLtoXUL('I am a <b>title</b>', title);
     vbox.appendChild(title);
-    var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-    description.setAttribute('class', 'description');
-    appendHTMLtoXUL("w00t <b>content</b>", description);
-    vbox.appendChild(description);
-    var url = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-    url.setAttribute('class', 'url');
-    appendHTMLtoXUL('url://', url);
-    vbox.appendChild(url);
-    box.appendChild(vbox);
+        box.appendChild(vbox);
 
     if (!current) {
       vbox.setAttribute('current', true);

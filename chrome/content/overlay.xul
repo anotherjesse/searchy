@@ -9,33 +9,11 @@
   <script type="application/x-javascript" src="chrome://searchy/content/overlay.js" />
 
   <toolbox id="navigator-toolbox">
-    <panel id="searchy"
-           onpopupshown="searchy.focused()"
-           onpopuphiding="searchy.hidden()">
+    <panel id="searchy">
+           onpopupshown="searchy.shown()"
+           onpopuphiding="searchy.hiding()">
       <vbox flex="1">
-        <hbox id="searchy-bar">
-          <label value="Searchy:" />
-          <textbox id="searchy-input"
-                   value=""
-                   oninput="searchy.input(event)"
-                   class="plain"
-                   flex="1" />
-        </hbox>
         <vbox id="searchy-results" />
-        <hbox id="searchy-details">
-          <description id="searchy-about-results" hidden="true" />
-          <description id="searchy-no-results" hidden="true">No results returned</description>
-          <vbox id="searchy-help">
-            <description>Start typing to search the web, results will appear here</description>
-            <description>Use arrow keys to select the result and press enter to visit</description>
-            <description>To search within the current site, start your query with @</description>
-          </vbox>
-          <spacer flex="1" />
-          <vbox>
-            <spacer flex="1" />
-            <label id="searchy-author" value="overstimulate" onclick="searchy.about()" />
-          </vbox>
-        </hbox>
       </vbox>
     </panel>
   </toolbox>

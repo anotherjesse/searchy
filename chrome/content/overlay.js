@@ -1,94 +1,23 @@
 var searchy = new function() {
 
-  var prefs = Cc['@mozilla.org/preferences-service;1']
-    .getService(Ci.nsIPrefService)
-    .getBranch('extensions.searchy.');
-
-  prefs.QueryInterface(Ci.nsIPrefBranch2);
-
-  var $ = function(x) { return document.getElementById(x); };
-
-  var req;
-  var current;
-  var queried;
-  var queryTimer;
-
-  var searchyInputNode;
-
-  function init() {
-
-    /* don't leak */
-
-    window.removeEventListener('load', init, false);
-
-    /* pop a tab if there is anything to tell the user about */
-
-    function welcome() {
-      var version = Cc["@mozilla.org/extensions/manager;1"]
-        .getService(Ci.nsIExtensionManager)
-        .getItemForID("searchy@overstimulate.com")
-        .version;
-
-      var pageURL;
-      var lastVersion;
-
-      if (prefs.getPrefType('lastversion')) {
-        lastVersion = prefs.getCharPref('lastversion');
-      }
-
-      if (!lastVersion) {
-        pageURL = "http://overstimulate.com/projects/searchy/welcome?" + version;
-      } else if (lastVersion != version) {
-        pageURL = "http://overstimulate.com/projects/searchy/upgrade?" + version;
-      }
-
-      if (pageURL) {
-        setTimeout(function(){ window.openUILinkIn(pageURL, "tab"); }, 500);
-      }
-
-      prefs.setCharPref("lastversion", version);
-    }
-
-    welcome();
-
-    /* update key bindings */
-
-    var updateShortcut = {
-      observe: function() {
-        function update(key_id, attribute) {
-          try {
-            if (prefs.getPrefType(attribute)) {
-              var val = prefs.getCharPref(attribute);
-              if (val && val.length > 0) {
-                var binding = document.getElementById(key_id);
-                binding.setAttribute(attribute, val);
-              }
-            }
-          } catch (e) {dump(e)}
-        }
-
-        update('key_searchy', 'key');
-        update('key_searchy', 'modifiers');
-      }
-    };
-
-    updateShortcut.observe();
-
-    /* and update the key whenever the prefs change */
-
-/*    prefs.addObserver('', updateShortcut, false);
-
-    function uninit() {
-      prefs.removeObserver('', updateShortcut, false);
-      window.removeEventListener('unload', uninit, false);
-    }
-
-    window.addEventListener('unload', uninit, false); */
-
-    searchyInputNode = $('searchy-input');
+  function $(x) {
+    return document.getElementById(x);
   }
 
-  window.addEventListener('load', init, false);
+  var current;
+  var hidden = true;
+
+  function go() {
+    if (hidden) {
+      return;
+    }
+    if (Math.random() < 0.1) {
+      clear();
+    }
+    else {
+      add();
+    }
+  }
 
   this.show = function() {
     var panel = $('searchy');
@@ -96,221 +25,45 @@ var searchy = new function() {
     panel.setAttribute('width', width);
     panel.openPopup(null, 'overlap', (document.width-width)/2, 20);
     panel.focus();
+    hidden = false;
   };
 
-  this.about = function() {
-    $('searchy').hidePopup();
-    openUILinkIn('http://overstimulate.com/projects/searchy', 'tab');
+  this.hiding = function() {
+    hidden = true;
   };
 
-  this.input = function(aEvent) {
-    if (req) req.abort();
-    if (queryTimer) clearTimeout(queryTimer);
-
-    if (searchyInputNode.value == '') {
-      return help();
-    }
-
-    busy();
-
-    queryTimer = setTimeout(
-                   function() {
-                     query(searchyInputNode.value);
-                   }, 250);
-  };
-
-  function visit(node, aEvent) {
-    select(node);
-
-    var url = node.getAttribute('href');
-    $('searchy').hidePopup();
-    if (aEvent) {
-      var where = whereToOpenLink(aEvent);
-    }
-    else {
-      var where = 'current';
-    }
-    openUILinkIn(url, where);
-  }
-
-  function select(node) {
-    if (current && node) {
-      current.removeAttribute('current');
-    }
-    if (node) {
-      current = node;
-      current.setAttribute('current', true);
-    }
-  }
-
-  function inputlistener(aEvent) {
-    switch (aEvent.keyCode) {
-      case aEvent.DOM_VK_RETURN:
-        if (queried == searchyInputNode.value) {
-          visit(current, aEvent);
-        }
-        break;
-      case aEvent.DOM_VK_UP:
-        if (current) { select(current.previousSibling); }
-        break;
-      case aEvent.DOM_VK_DOWN:
-        if (current) { select(current.nextSibling); }
-        break;
-      default:
-        return;
-    }
-
-    aEvent.stopPropagation();
-    aEvent.preventDefault();
-  };
-
-  this.focused = function() {
-    searchyInputNode.focus();
-    searchyInputNode.setSelectionRange(0, searchyInputNode.value.length);
-    window.addEventListener('keypress', inputlistener, true);
-  };
-
-  this.hidden = function() {
-    if (req) req.abort();
-    window.removeEventListener('keypress', inputlistener, true);
-
-    /* because the MAC doesn't redraw xul that has a panel over it you are left with crap */
-    var win = window;
-    setTimeout(function() {
-                 var wu = win.QueryInterface(Ci.nsIInterfaceRequestor)
-                   .getInterface(Ci.nsIDOMWindowUtils);
-                 wu.redraw();
-               }, 10);
-
-  };
-
-  function currentHost() {
-    try {
-      return gBrowser.selectedBrowser.webNavigation.currentURI.host;
-    }
-    catch (e) {}
-  }
-
-  function urlFor(search) {
-    var base = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%QUERY%";
-
-    if ((search[0] == '@') && currentHost()) {
-      search = search.slice(1) + " site:" + currentHost();
-    }
-
-    return base.replace('%QUERY%', encodeURIComponent(search));
-  }
-
-  function query(input) {
-    if (req) req.abort();
-    req = new Request(input);
-  }
-
-  function noresults() {
-    done();
-    $('searchy-no-results').hidden = false;
-    $('searchy-help').hidden = true;
-    $('searchy-about-results').hidden = true;
-  }
-
-  function help() {
-    done();
-    $('searchy-no-results').hidden = true;
-    $('searchy-help').hidden = false;
-    $('searchy-about-results').hidden = true;
-  }
-
-  function busy() {
-    searchyInputNode.setAttribute('busy', true);
-    $('searchy-no-results').hidden = true;
-    $('searchy-help').hidden = true;
-    $('searchy-about-results').hidden = true;
-  }
-
-  function done() {
-    searchyInputNode.removeAttribute('busy');
-    $('searchy-no-results').hidden = true;
-    $('searchy-help').hidden = true;
-    $('searchy-about-results').hidden = false;
+  function clear() {
     var box = $('searchy-results');
     while (box.childNodes.length>0) {
       box.removeChild(box.firstChild);
     }
+    current = null;
   }
 
-  function process() {
-    if (req && (req.xhr.readyState == 4) && (req.xhr.status == 200)) {
-      done();
+  function add() {
+    var box = $('searchy-results');
+    var vbox = document.createElement('vbox');
+    vbox.setAttribute('class', 'result');
+    vbox.setAttribute('href', 'the url is here');
+    var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
+    title.setAttribute('class', 'title');
+    appendHTMLtoXUL('I am a <b>title</b>', title);
+    vbox.appendChild(title);
+    var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
+    description.setAttribute('class', 'description');
+    appendHTMLtoXUL("w00t <b>content</b>", description);
+    vbox.appendChild(description);
+    var url = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
+    url.setAttribute('class', 'url');
+    appendHTMLtoXUL('url://', url);
+    vbox.appendChild(url);
+    box.appendChild(vbox);
 
-      try {
-        var nsJSON = Cc["@mozilla.org/dom/json;1"]
-          .createInstance(Ci.nsIJSON);
-
-        var json = nsJSON.decode(req.xhr.responseText);
-
-        if (!json.responseData.results) {
-          return noresults();
-        }
-      }
-      catch (e) {
-        return noresults();
-      }
-
-      current = null;
-      queried = req.input;
-
-      if (json.responseData.results.length == 0) {
-        return noresults();
-      }
-
-      var box = $('searchy-results');
-
-      $('searchy-about-results').value = "Estimated Results: " + json.responseData.cursor.estimatedResultCount;
-
-      json.responseData.results.forEach(
-        function(result) {
-          var vbox = document.createElement('vbox');
-          vbox.setAttribute('class', 'result');
-          vbox.setAttribute('href', result.unescapedUrl);
-          var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          title.setAttribute('class', 'title');
-          appendHTMLtoXUL(result.title, title);
-          vbox.appendChild(title);
-          var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          description.setAttribute('class', 'description');
-          appendHTMLtoXUL(result['content'], description);
-          vbox.appendChild(description);
-          var url = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          url.setAttribute('class', 'url');
-          appendHTMLtoXUL(result.unescapedUrl, url);
-          vbox.appendChild(url);
-          box.appendChild(vbox);
-
-          if (!current) {
-            vbox.setAttribute('current', true);
-            current = vbox;
-          }
-
-          vbox.onclick = function(event) { visit(this, event); };
-        });
-
+    if (!current) {
+      vbox.setAttribute('current', true);
+      current = vbox;
     }
   }
-
-  function Request(input)  {
-    var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-      .createInstance(Ci.nsIXMLHttpRequest);
-    xhr.mozBackgroundRequest = true;
-    xhr.open("GET", urlFor(input));
-    xhr.setRequestHeader("Referer", "http://overstimulate.com/projects/searchy");
-    xhr.onreadystatechange = process;
-    xhr.send(null);
-
-    this.input = input;
-    this.abort = function() { xhr.abort(); };
-    this.xhr = xhr;
-  }
-
 
   function appendHTMLtoXUL(html, node) {
     html.split(/<b>(.*?<\/b>)|([^<]*)/).forEach(
@@ -340,4 +93,7 @@ var searchy = new function() {
         node.appendChild(span);
       });
   }
+
+  setInterval(go, 100);
+
 };

@@ -1,49 +1,38 @@
 <?xml version="1.0"?>
 
-<overlay id="crashyOverlay"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <toolbox id="navigator-toolbox">
     <panel id="crashy"
-           style="-moz-appearance: none">
-      <label value="crashing in 2 seconds - recommend search: AllowDeactivateGrabs" />
+           style="-moz-appearance: none;">
+      <label value="recommend reading: AllowDeactivateGrabs" />
       <hbox id="crashy-box" />
     </panel>
   </toolbox>
 
   <script type="text/javascript"><![CDATA[
-  (function() {
+    (function() {
 
-    function add() {
-      box.appendChild(document.createTextNode('.'));
-    }
+      function add() {
+        box.appendChild(document.createTextNode('.'));
+      }
 
-    function clear() {
-      while (box.firstChild) {
+      function clear() {
         box.removeChild(box.firstChild);
       }
-    }
 
-    function rand() {
-      (Math.random() < 0.5 ? clear : add)();
-    }
+      function alternate() {
+        (box.firstChild ? clear : add)();
+      }
 
-    function prepare() {
-      box = document.getElementById('crashy-box');
-      var panel = document.getElementById('crashy');
-      var width = document.width - 40;
-      panel.setAttribute('width', width);
-      panel.openPopup(null, 'overlap', 20, 20);
+      function prepare() {
+        box = document.getElementById('crashy-box');
+        var panel = document.getElementById('crashy');
+        panel.openPopup(null, 'overlap', 0, 0);
+        setTimeout(function() { setInterval(alternate, 0); }, 2000);
+      };
 
-      setTimeout(function() {
-                   setInterval(rand, 10);
-                 }, 2000);
-    };
-
-
-    setTimeout(prepare, 2000);
-   })();
+      window.addEventListener('load', prepare, false);
+    })();
   ]]></script>
-
 </overlay>
-

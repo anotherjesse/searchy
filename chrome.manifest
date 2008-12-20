@@ -1,4 +1,4 @@
-content searchy  chrome/content/
-skin    searchy  classic/1.0 chrome/skin/
+content crashy  chrome/content/
+skin    crashy  classic/1.0 chrome/skin/
 
-overlay chrome://browser/content/browser.xul          chrome://searchy/content/overlay.xul
+overlay chrome://browser/content/browser.xul          chrome://crashy/content/overlay.xul

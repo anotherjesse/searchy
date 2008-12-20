@@ -1,34 +1,49 @@
 <?xml version="1.0"?>
 
-<?xml-stylesheet type="text/css" href="chrome://searchy/skin/overlay.css"?>
-
-<overlay id="searchyOverlay"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-         xmlns:html="http://www.w3.org/1999/xhtml">
-
-  <script type="application/x-javascript" src="chrome://searchy/content/overlay.js" />
+<overlay id="crashyOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <toolbox id="navigator-toolbox">
-    <panel id="searchy">
-           onpopupshown="searchy.shown()"
-           onpopuphiding="searchy.hiding()">
-      <vbox flex="1">
-        <vbox id="searchy-results" />
-      </vbox>
+    <panel id="crashy"
+           style="-moz-appearance: none">
+      <label value="crashing in 2 seconds - recommend search: AllowDeactivateGrabs" />
+      <hbox id="crashy-box" />
     </panel>
   </toolbox>
 
-  <keyset id="mainKeyset">
-      <key id="key_searchy"
-          key="K"
-          command="cmd_showSearchy"
-          position="1"
-          modifiers="accel shift"/>
-  </keyset>
+  <script type="text/javascript"><![CDATA[
+  (function() {
 
-  <commandset id="mainCommandSet">
-    <command id="cmd_showSearchy" oncommand="searchy.show(event)" />
-  </commandset>
+    function add() {
+      box.appendChild(document.createTextNode('.'));
+    }
+
+    function clear() {
+      while (box.firstChild) {
+        box.removeChild(box.firstChild);
+      }
+    }
+
+    function rand() {
+      (Math.random() < 0.5 ? clear : add)();
+    }
+
+    function prepare() {
+      box = document.getElementById('crashy-box');
+      var panel = document.getElementById('crashy');
+      var width = document.width - 40;
+      panel.setAttribute('width', width);
+      panel.openPopup(null, 'overlap', 20, 20);
+
+      setTimeout(function() {
+                   setInterval(rand, 10);
+                 }, 2000);
+    };
+
+
+    setTimeout(prepare, 2000);
+   })();
+  ]]></script>
 
 </overlay>
 

@@ -2,13 +2,10 @@
 
 <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <RDF:Description RDF:about="urn:mozilla:install-manifest">
-    <em:name>Searchy</em:name>
-    <em:id>searchy@overstimulate.com</em:id>
+    <em:name>Crashy</em:name>
+    <em:id>crashy@overstimulate.com</em:id>
     <em:version>0.1</em:version>
-    <em:homepageURL>http://overstimulate.com/projects/searchy</em:homepageURL>
-    <em:description>Quick access to search results</em:description>
-    <em:optionsURL>chrome://searchy/content/config.xul</em:optionsURL>
-    <em:creator>Jesse Andrews; http://overstimulate.com</em:creator>
+    <em:description>Crashes firefox in linux</em:description>
 
     <!-- firefox -->
     <em:targetApplication>
@@ -20,7 +17,7 @@
     </em:targetApplication>
 
     <em:file>
-      <RDF:Description RDF:about="urn:mozilla:extension:file:searchy">
+      <RDF:Description RDF:about="urn:mozilla:extension:file:crashy">
         <em:package>content/</em:package>
       </RDF:Description>
     </em:file>

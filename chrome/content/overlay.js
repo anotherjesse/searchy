@@ -11,7 +11,9 @@ var searchy = new function() {
   var req;
   var current;
   var queried;
-  var timer;
+  var queryTimer;
+
+  var searchyInputNode;
 
   function init() {
 
@@ -82,6 +84,8 @@ var searchy = new function() {
     }
 
     window.addEventListener('unload', uninit, false); */
+
+    searchyInputNode = $('searchy-input');
   }
 
   window.addEventListener('load', init, false);
@@ -101,18 +105,18 @@ var searchy = new function() {
 
   this.input = function(aEvent) {
     if (req) req.abort();
-    if (timer) clearTimeout(timer);
+    if (queryTimer) clearTimeout(queryTimer);
 
-    if ($('searchy-input').value == '') {
+    if (searchyInputNode.value == '') {
       return help();
     }
 
     busy();
 
-    timer = setTimeout(
-              function() {
-                query($('searchy-input').value);
-              }, 250);
+    queryTimer = setTimeout(
+                   function() {
+                     query(searchyInputNode.value);
+                   }, 250);
   };
 
   function visit(node, aEvent) {
@@ -142,7 +146,7 @@ var searchy = new function() {
   function inputlistener(aEvent) {
     switch (aEvent.keyCode) {
       case aEvent.DOM_VK_RETURN:
-        if (queried == $('searchy-input').value) {
+        if (queried == searchyInputNode.value) {
           visit(current, aEvent);
         }
         break;
@@ -161,8 +165,8 @@ var searchy = new function() {
   };
 
   this.focused = function() {
-    $('searchy-input').focus();
-    $('searchy-input').setSelectionRange(0, $('searchy-input').value.length);
+    searchyInputNode.focus();
+    searchyInputNode.setSelectionRange(0, searchyInputNode.value.length);
     window.addEventListener('keypress', inputlistener, true);
   };
 
@@ -217,19 +221,19 @@ var searchy = new function() {
   }
 
   function busy() {
-    $('searchy-input').setAttribute('busy', true);
+    searchyInputNode.setAttribute('busy', true);
     $('searchy-no-results').hidden = true;
     $('searchy-help').hidden = true;
     $('searchy-about-results').hidden = true;
   }
 
   function done() {
-    $('searchy-input').removeAttribute('busy');
+    searchyInputNode.removeAttribute('busy');
     $('searchy-no-results').hidden = true;
     $('searchy-help').hidden = true;
     $('searchy-about-results').hidden = false;
     var box = $('searchy-results');
-    while (box.firstChild) {
+    while (box.childNodes.length>0) {
       box.removeChild(box.firstChild);
     }
   }

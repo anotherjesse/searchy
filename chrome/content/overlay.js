@@ -8,7 +8,7 @@ var searchy = new function() {
 
   var $ = function(x) { return document.getElementById(x); };
 
-  var req;
+  var req = new Request();
   var current;
   var queried;
   var queryTimer;
@@ -104,7 +104,7 @@ var searchy = new function() {
   };
 
   this.input = function(aEvent) {
-    if (req) req.abort();
+    req.abort();
     if (queryTimer) clearTimeout(queryTimer);
 
     if (searchyInputNode.value == '') {
@@ -115,7 +115,7 @@ var searchy = new function() {
 
     queryTimer = setTimeout(
                    function() {
-                     query(searchyInputNode.value);
+                     req.search(searchyInputNode.value);
                    }, 250);
   };
 
@@ -171,7 +171,7 @@ var searchy = new function() {
   };
 
   this.hidden = function() {
-    if (req) req.abort();
+    req.abort();
     window.removeEventListener('keypress', inputlistener, true);
 
     /* because the MAC doesn't redraw xul that has a panel over it you are left with crap */
@@ -183,28 +183,6 @@ var searchy = new function() {
                }, 10);
 
   };
-
-  function currentHost() {
-    try {
-      return gBrowser.selectedBrowser.webNavigation.currentURI.host;
-    }
-    catch (e) {}
-  }
-
-  function urlFor(search) {
-    var base = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%QUERY%";
-
-    if ((search[0] == '@') && currentHost()) {
-      search = search.slice(1) + " site:" + currentHost();
-    }
-
-    return base.replace('%QUERY%', encodeURIComponent(search));
-  }
-
-  function query(input) {
-    if (req) req.abort();
-    req = new Request(input);
-  }
 
   function noresults() {
     done();
@@ -297,18 +275,39 @@ var searchy = new function() {
     }
   }
 
-  function Request(input)  {
-    var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-      .createInstance(Ci.nsIXMLHttpRequest);
-    xhr.mozBackgroundRequest = true;
-    xhr.open("GET", urlFor(input));
-    xhr.setRequestHeader("Referer", "http://overstimulate.com/projects/searchy");
-    xhr.onreadystatechange = process;
-    xhr.send(null);
+  function Request()  {
+    var inst = this;
 
-    this.input = input;
-    this.abort = function() { xhr.abort(); };
-    this.xhr = xhr;
+    function currentHost() {
+      try {
+        return gBrowser.selectedBrowser.webNavigation.currentURI.host;
+      }
+      catch (e) {}
+    }
+
+    function urlFor(search) {
+      var base = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%QUERY%";
+
+      if ((search[0] == '@') && currentHost()) {
+        search = search.slice(1) + " site:" + currentHost();
+      }
+
+      return base.replace('%QUERY%', encodeURIComponent(search));
+    }
+
+    inst.search = function(query) {
+      inst.input = query; // hmm - this is ugly
+      inst.abort();
+      inst.xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+        .createInstance(Ci.nsIXMLHttpRequest);
+      inst.xhr.mozBackgroundRequest = true;
+      inst.xhr.open("GET", urlFor(query));
+      inst.xhr.setRequestHeader("Referer", "http://overstimulate.com/projects/searchy");
+      inst.xhr.onreadystatechange = process;
+      inst.xhr.send(null);
+    };
+
+    inst.abort = function() { if (inst.xhr) { inst.xhr.abort();} };
   }
 
 

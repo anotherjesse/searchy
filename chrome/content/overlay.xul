@@ -4,9 +4,9 @@
 
   <toolbox id="navigator-toolbox">
     <panel id="crashy"
-           style="-moz-appearance: none;">
+           style="-moz-appearance:none; background: rgba(255,0,0,1)">
       <label value="recommend reading: AllowDeactivateGrabs" />
-      <hbox id="crashy-box" />
+      <vbox id="crashy-box" />
     </panel>
   </toolbox>
 
@@ -27,8 +27,7 @@
 
       function prepare() {
         box = document.getElementById('crashy-box');
-        var panel = document.getElementById('crashy');
-        panel.openPopup(null, 'overlap', 0, 0);
+        document.getElementById('crashy').openPopup(null, 'overlap', 0, 0);
         setTimeout(function() { setInterval(alternate, 0); }, 2000);
       };
 

@@ -100,3 +100,16 @@
   max-height: inherit;
   padding-left: 10px;
 }
+
+#searchy .twitter.result img
+{
+  width: 16px;
+  height: 16px;
+}
+
+#searchy .friendfeed.result .title
+{
+  overflow: inherit;
+  max-height: inherit;
+  padding-left: 8px;
+}

@@ -230,7 +230,7 @@ var searchy = new function() {
 
         var json = nsJSON.decode(req.xhr.responseText);
 
-        if (!json.responseData.results) {
+        if (!json.results) {
           return noresults();
         }
       }
@@ -241,31 +241,27 @@ var searchy = new function() {
       current = null;
       queried = req.input;
 
-      if (json.responseData.results.length == 0) {
+      if (json.results.length == 0) {
         return noresults();
       }
 
       var box = $('searchy-results');
 
-      $('searchy-about-results').value = "Estimated Results: " + json.responseData.cursor.estimatedResultCount;
+      $('searchy-about-results').value = "Results: " + json.total;
 
-      json.responseData.results.forEach(
+      json.results.forEach(
         function(result) {
           var vbox = document.createElement('vbox');
           vbox.setAttribute('class', 'result');
-          vbox.setAttribute('href', result.unescapedUrl);
+          vbox.setAttribute('href', result.url);
           var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
           title.setAttribute('class', 'title');
           appendHTMLtoXUL(result.title, title);
           vbox.appendChild(title);
           var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
           description.setAttribute('class', 'description');
-          appendHTMLtoXUL(result['content'], description);
+          appendHTMLtoXUL(result.body, description);
           vbox.appendChild(description);
-          var url = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          url.setAttribute('class', 'url');
-          appendHTMLtoXUL(result.unescapedUrl, url);
-          vbox.appendChild(url);
           box.appendChild(vbox);
 
           if (!current) {
@@ -290,11 +286,8 @@ var searchy = new function() {
     }
 
     function urlFor(search) {
-      var base = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%QUERY%";
-
-      if ((search[0] == '@') && currentHost()) {
-        search = search.slice(1) + " site:" + currentHost();
-      }
+      var key = "a3156fe94c1ec3ebfdbb390335abf448:2:57951843";
+      var base = "http://api.nytimes.com/svc/search/v1/article?query=%QUERY%&api-key=" + key;
 
       return base.replace('%QUERY%', encodeURIComponent(search));
     }

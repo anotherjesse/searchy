@@ -15,15 +15,20 @@
   background: #fff url(spinner.gif) no-repeat center right;
 }
 
-#searchy
+#searchy[OS=Darwin],
+#searchy[OS=WINNT]
 {
-  padding: 10px 8px 6px 8px;
-  margin-top: 4px;
   -moz-appearance: none;
   background-color: rgba(22,22,22,0.90);
   border: 1px solid rgba(255,255,255,0.15);
   -moz-border-radius: 4px;
+}
+
+#searchy-wrapper
+{
+  background: black;
   color: white;
+  padding: 14px 8px 6px 8px;
 }
 
 #searchy .result

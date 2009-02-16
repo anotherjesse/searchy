@@ -16,6 +16,10 @@ var searchy = new function() {
   var searchyInputNode;
 
   function init() {
+    /* add an attribute so we can make sure not to crash on linux */
+
+    var runtime = Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULRuntime);
+    $('searchy').setAttribute('OS', runtime.OS);
 
     /* don't leak */
 

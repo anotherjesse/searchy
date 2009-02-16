@@ -230,7 +230,7 @@ var searchy = new function() {
 
         var json = nsJSON.decode(req.xhr.responseText);
 
-        if (!json.responseData.results) {
+        if (!json.results) {
           return noresults();
         }
       }
@@ -241,31 +241,39 @@ var searchy = new function() {
       current = null;
       queried = req.input;
 
-      if (json.responseData.results.length == 0) {
+      if (json.results.length == 0) {
         return noresults();
       }
 
       var box = $('searchy-results');
+      // $('searchy-about-results').value = "Estimated Results: " + json.responseData.cursor.estimatedResultCount;
 
-      $('searchy-about-results').value = "Estimated Results: " + json.responseData.cursor.estimatedResultCount;
-
-      json.responseData.results.forEach(
+      json.results.forEach(
         function(result) {
-          var vbox = document.createElement('vbox');
-          vbox.setAttribute('class', 'result');
-          vbox.setAttribute('href', result.unescapedUrl);
+/*
+          var sample = {
+            "text": "Writing maths- Test today... but looking forward to continuing my 3D- Project in Maya afterwards ;-)",
+            "to_user_id": null,
+            "from_user": "Omme",
+            "id": 1214632968,
+            "from_user_id": 3991046,
+            "iso_language_code": "en",
+            "profile_image_url": "http:\/\/s3.amazonaws.com\/twitter_production\/profile_images\/73361113\/mypictr_150x150_normal.jpg",
+            "created_at": "Mon, 16 Feb 2009 07:36:39 +0000"
+          };
+*/
+
+          var vbox = document.createElement('hbox');
+          vbox.setAttribute('class', 'result twitter');
+          vbox.setAttribute('href', 'http://twitter.com/' + result.from_user + '/status/' + result.id);
+          var avatar = document.createElementNS("http://www.w3.org/1999/xhtml", "html:img");
+          avatar.setAttribute('src', result.profile_image_url);
+          vbox.appendChild(avatar);
           var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
           title.setAttribute('class', 'title');
-          appendHTMLtoXUL(result.title, title);
+          title.setAttribute('flex', 1);
+          appendHTMLtoXUL(result.text, title);
           vbox.appendChild(title);
-          var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          description.setAttribute('class', 'description');
-          appendHTMLtoXUL(result['content'], description);
-          vbox.appendChild(description);
-          var url = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          url.setAttribute('class', 'url');
-          appendHTMLtoXUL(result.unescapedUrl, url);
-          vbox.appendChild(url);
           box.appendChild(vbox);
 
           if (!current) {
@@ -290,11 +298,12 @@ var searchy = new function() {
     }
 
     function urlFor(search) {
-      var base = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%QUERY%";
+      var base = "http://search.twitter.com/search.json?q=%QUERY%";
 
-      if ((search[0] == '@') && currentHost()) {
+/*      if ((search[0] == '@') && currentHost()) {
         search = search.slice(1) + " site:" + currentHost();
       }
+*/
 
       return base.replace('%QUERY%', encodeURIComponent(search));
     }

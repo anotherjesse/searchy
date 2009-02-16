@@ -87,3 +87,16 @@
   color: #f80;
   text-decoration: underline;
 }
+
+#searchy .twitter.result img
+{
+  width: 48px;
+  height: 48px;
+}
+
+#searchy .twitter.result .title
+{
+  overflow: inherit;
+  max-height: inherit;
+  padding-left: 10px;
+}

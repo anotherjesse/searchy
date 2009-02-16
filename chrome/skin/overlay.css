@@ -87,3 +87,13 @@
   color: #f80;
   text-decoration: underline;
 }
+
+#searchy .result.youtube img
+{
+  max-width: 120px
+}
+
+#searchy .result.youtube vbox
+{
+  padding-left: 10px
+}

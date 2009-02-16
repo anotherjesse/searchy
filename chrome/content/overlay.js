@@ -251,26 +251,35 @@ var searchy = new function() {
 
       json.responseData.results.forEach(
         function(result) {
+          dump(result.toSource());
+          var hbox = document.createElement('hbox');
+          hbox.setAttribute('pack', 'start');
+          hbox.setAttribute('class', 'result youtube');
+          hbox.setAttribute('href', result.url);
+          var thumb = document.createElementNS("http://www.w3.org/1999/xhtml", "html:img");
+          thumb.setAttribute('src', result.tbUrl);
+          hbox.appendChild(thumb);
           var vbox = document.createElement('vbox');
-          vbox.setAttribute('class', 'result');
-          vbox.setAttribute('href', result.unescapedUrl);
+          vbox.setAttribute('flex', 1);
           var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
+          title.setAttribute("crop", 'end');
           title.setAttribute('class', 'title');
           appendHTMLtoXUL(result.title, title);
           vbox.appendChild(title);
-          var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          description.setAttribute('class', 'description');
-          appendHTMLtoXUL(result['content'], description);
-          vbox.appendChild(description);
+          var content = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
+          content.setAttribute('class', 'description');
+          appendHTMLtoXUL(result['content'], content);
+          vbox.appendChild(content);
           var url = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
           url.setAttribute('class', 'url');
-          appendHTMLtoXUL(result.unescapedUrl, url);
+          appendHTMLtoXUL(result.publisher, url);
           vbox.appendChild(url);
-          box.appendChild(vbox);
+          hbox.appendChild(vbox);
+          box.appendChild(hbox);
 
           if (!current) {
             vbox.setAttribute('current', true);
-            current = vbox;
+            current = hbox;
           }
 
           vbox.onclick = function(event) { visit(this, event); };
@@ -290,7 +299,7 @@ var searchy = new function() {
     }
 
     function urlFor(search) {
-      var base = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%QUERY%";
+      var base = "http://ajax.googleapis.com/ajax/services/search/video?v=1.0&q=%QUERY%";
 
       if ((search[0] == '@') && currentHost()) {
         search = search.slice(1) + " site:" + currentHost();

@@ -1,4 +1,4 @@
-var google = {
+var twitter = {
   name: 'twitter',
   description: 'Twitter search',
   queryUrl: function(search) {

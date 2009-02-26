@@ -7,6 +7,7 @@
          xmlns:html="http://www.w3.org/1999/xhtml">
 
   <script type="application/x-javascript" src="chrome://searchy/content/engines/google.js" />
+  <script type="application/x-javascript" src="chrome://searchy/content/engines/nyt.js" />
   <script type="application/x-javascript" src="chrome://searchy/content/engines/twitter.js" />
   <script type="application/x-javascript" src="chrome://searchy/content/engines/video.js" />
   <script type="application/x-javascript" src="chrome://searchy/content/overlay.js" />

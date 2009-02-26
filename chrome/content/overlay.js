@@ -168,13 +168,13 @@ var searchy = new function() {
     aEvent.preventDefault();
   };
 
-  this.focused = function() {
+  this.onFocus = function() {
     searchyInputNode.focus();
     searchyInputNode.setSelectionRange(0, searchyInputNode.value.length);
     window.addEventListener('keypress', inputlistener, true);
   };
 
-  this.hidden = function() {
+  this.onHide = function() {
     req.abort();
     window.removeEventListener('keypress', inputlistener, true);
 
@@ -229,60 +229,33 @@ var searchy = new function() {
           .createInstance(Ci.nsIJSON);
 
         var json = nsJSON.decode(req.xhr.responseText);
-
-        if (!json.responseData.results) {
-          return noresults();
-        }
       }
       catch (e) {
         return noresults();
       }
 
       current = null;
+      // FIXME: not sure but perhaps queried should change even if noresults
       queried = req.input;
 
-      if (json.responseData.results.length == 0) {
+      var results = video.process(json);
+      if (results.length == 0) {
         return noresults();
       }
 
       var box = $('searchy-results');
 
-      $('searchy-about-results').value = "Estimated Results: " + json.responseData.cursor.estimatedResultCount;
-
-      json.responseData.results.forEach(
+      results.forEach(
         function(result) {
-          dump(result.toSource());
-          var hbox = document.createElement('hbox');
-          hbox.setAttribute('pack', 'start');
-          hbox.setAttribute('class', 'result youtube');
-          hbox.setAttribute('href', result.url);
-          var thumb = document.createElementNS("http://www.w3.org/1999/xhtml", "html:img");
-          thumb.setAttribute('src', result.tbUrl);
-          hbox.appendChild(thumb);
-          var vbox = document.createElement('vbox');
-          vbox.setAttribute('flex', 1);
-          var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          title.setAttribute("crop", 'end');
-          title.setAttribute('class', 'title');
-          appendHTMLtoXUL(result.title, title);
-          vbox.appendChild(title);
-          var content = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          content.setAttribute('class', 'description');
-          appendHTMLtoXUL(result['content'], content);
-          vbox.appendChild(content);
-          var url = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
-          url.setAttribute('class', 'url');
-          appendHTMLtoXUL(result.publisher, url);
-          vbox.appendChild(url);
-          hbox.appendChild(vbox);
+          var node = video.buildResultNode(result);
           box.appendChild(hbox);
 
           if (!current) {
-            vbox.setAttribute('current', true);
-            current = hbox;
+            box.setAttribute('current', true);
+            current = box;
           }
 
-          vbox.onclick = function(event) { visit(this, event); };
+          box.onclick = function(event) { visit(this, event); };
         });
 
     }
@@ -299,13 +272,12 @@ var searchy = new function() {
     }
 
     function urlFor(search) {
-      var base = "http://ajax.googleapis.com/ajax/services/search/video?v=1.0&q=%QUERY%";
 
-      if ((search[0] == '@') && currentHost()) {
-        search = search.slice(1) + " site:" + currentHost();
-      }
+//      if ((search[0] == '@') && currentHost()) {
+//        search = search.slice(1) + " site:" + currentHost();
+//      }
 
-      return base.replace('%QUERY%', encodeURIComponent(search));
+      return video.queryUrl(search);
     }
 
     inst.search = function(query) {
@@ -334,15 +306,15 @@ var searchy = new function() {
         }
 
         /* FIXME: instead of deleting <wbr>, instead create multiple spans
-         *        so the layout engine can wrap the layout - JA
+         *        so the layout engine can wrap the layout
          */
 
         text = text.replace(/<wbr>/g, "");
 
-        /* convert XML UTF-16 entities to string characters */
+        // convert XML UTF-16 entities to string characters
         text = text.replace(/&#(\d+);/g, function() { return String.fromCharCode(RegExp.$1); });
 
-        /* convert some of the more popular XML entities in text */
+        // convert some of the more popular XML entities in text
         text = text.replace(/&quot;/g, '"');
         text = text.replace(/&gt;/g, '>');
         text = text.replace(/&lt;/g, '<');

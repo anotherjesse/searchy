@@ -6,12 +6,13 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
          xmlns:html="http://www.w3.org/1999/xhtml">
 
+  <script type="application/x-javascript" src="chrome://searchy/content/engines/video.js" />
   <script type="application/x-javascript" src="chrome://searchy/content/overlay.js" />
 
   <toolbox id="navigator-toolbox">
     <panel id="searchy"
-           onpopupshown="searchy.focused()"
-           onpopuphiding="searchy.hidden()">
+           onpopupshown="searchy.onFocus()"
+           onpopuphiding="searchy.onHide()">
       <vbox flex="1" id="searchy-wrapper">
         <hbox id="searchy-bar">
           <label value="Searchy:" />

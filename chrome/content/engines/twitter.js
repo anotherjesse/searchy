@@ -15,7 +15,7 @@ var twitter = {
     var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
     title.setAttribute('class', 'title');
     title.setAttribute('flex', 1);
-    appendHTMLtoXUL(result.text, title);
+    fakeHTMLinXUL(result.text, title);
     vbox.appendChild(title);
     return box;
   },

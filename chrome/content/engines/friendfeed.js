@@ -19,7 +19,7 @@ var friendfeed = {
     var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
     title.setAttribute('class', 'title');
     title.setAttribute('flex', 1);
-    appendHTMLtoXUL(result.title, title);
+    fakeHTMLinXUL(result.title, title);
     vbox.appendChild(title);
     return vbox;
   },

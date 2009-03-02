@@ -12,11 +12,11 @@ var nyt = {
     vbox.setAttribute('href', result.url);
     var title = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
     title.setAttribute('class', 'title');
-    appendHTMLtoXUL(result.title, title);
+    fakeHTMLinXUL(result.title, title);
     vbox.appendChild(title);
     var description = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
     description.setAttribute('class', 'description');
-    appendHTMLtoXUL(result.body, description);
+    fakeHTMLinXUL(result.body, description);
     vbox.appendChild(description);
     return vbox;
   },

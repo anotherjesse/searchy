@@ -26,7 +26,7 @@ var searchy = new function() {
     return engine;
   }
 
-  engine = LoadEngine('chrome://searchy/content/engines/google.js');
+  engine = LoadEngine('chrome://searchy/content/engines/video.js');
 
   function init() {
     /* add an attribute so we can make sure not to crash on linux */

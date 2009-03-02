@@ -36,3 +36,32 @@ function process(json) {
 function details(json) {
   return "Estimated Results: " + json.responseData.cursor.estimatedResultCount;
 }
+
+var css = (<r><![CDATA[
+
+#searchy .result .title
+{
+  font-size: 1.3em;
+  padding-bottom: 5px;
+  color: #ffa;
+  max-height: 1em;
+  overflow: hidden;
+}
+
+#searchy .result .description
+{
+  padding-bottom: 5px;
+}
+
+#searchy .result .url
+{
+  padding-bottom: 5px;
+  color: #08f;
+  text-decoration: underline;
+  max-height: 1em;
+  line-height: 1em;
+  overflow: hidden;
+}
+
+]]></r>).toString();
+

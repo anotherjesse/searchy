@@ -15,6 +15,7 @@ var searchy = new function() {
 
   var searchyInputNode;
 
+  c = 0;
 
   function LoadEngine(path) {
     var engine = {};
@@ -261,6 +262,8 @@ var searchy = new function() {
       if (engine.details) {
         $('searchy-about-results').value = engine.details(json);
       }
+
+      $('searchy-results-style').innerHTML = engine.css;
 
       results.forEach(
         function(result) {

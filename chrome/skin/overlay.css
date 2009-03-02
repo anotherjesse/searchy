@@ -45,33 +45,9 @@
   border: 1px solid #888;
 }
 
-#searchy .result .title
-{
-  font-size: 1.3em;
-  padding-bottom: 5px;
-  color: #ffa;
-  max-height: 1em;
-  overflow: hidden;
-}
-
 #searchy .result .bold
 {
   font-weight: bold;
-}
-
-#searchy .result .description
-{
-  padding-bottom: 5px;
-}
-
-#searchy .result .url
-{
-  padding-bottom: 5px;
-  color: #08f;
-  text-decoration: underline;
-  max-height: 1em;
-  line-height: 1em;
-  overflow: hidden;
 }
 
 #searchy #searchy-help,

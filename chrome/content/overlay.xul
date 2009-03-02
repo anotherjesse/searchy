@@ -12,6 +12,7 @@
     <panel id="searchy"
            onpopupshown="searchy.onFocus()"
            onpopuphiding="searchy.onHide()">
+      <html:style type="text/css" id="searchy-results-style"></html:style>
       <vbox flex="1" id="searchy-wrapper">
         <hbox id="searchy-bar">
           <label value="Searchy:" />

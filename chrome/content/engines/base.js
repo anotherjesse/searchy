@@ -1,10 +1,3 @@
-function currentHost() {
-  try {
-    return gBrowser.selectedBrowser.webNavigation.currentURI.host;
-  }
-  catch (e) {}
-}
-
 function fakeHTMLinXUL(html, node) {
   html.split(/<b>(.*?<\/b>)|([^<]*)/).forEach(
     function(text) {

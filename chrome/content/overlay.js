@@ -8,6 +8,7 @@ var searchy = new function() {
 
   var $ = function(x) { return document.getElementById(x); };
 
+  var engines = {};
   var req = new Request();
   var current;
   var queried;
@@ -24,17 +25,27 @@ var searchy = new function() {
     return engine;
   }
 
-  var engines = {};
-
   ['google', 'twitter', 'nyt', 'video', 'friendfeed'].forEach(
     function(name) {
       engines[name] = LoadEngine('chrome://searchy/content/engines/' + name + '.js');
-
     });
 
-  var defaultEngine = engines.google;
+  function currentHost() {
+    try {
+      return gBrowser.selectedBrowser.webNavigation.currentURI.host;
+    }
+    catch (e) {}
+  }
 
   function init() {
+    /* update search engine list */
+    for (name in engines) {
+      var label = document.createElement('label');
+      label.setAttribute('value', '@' + name);
+      label.setAttribute('style', 'font-weight:bold');
+      $('searchy-engines').appendChild(label);
+    }
+
     /* add an attribute so we can make sure not to crash on linux */
 
     var runtime = Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULRuntime);
@@ -240,8 +251,11 @@ var searchy = new function() {
     }
   }
 
-  function process() {
-    if (req && (req.xhr.readyState == 4) && (req.xhr.status == 200)) {
+  function Request()  {
+    var inst = this;
+    var engine;
+
+    function process() {
       done();
 
       try {
@@ -258,22 +272,22 @@ var searchy = new function() {
       // FIXME: not sure but perhaps queried should change even if noresults
       queried = req.input;
 
-      var results = defaultEngine.process(json);
+      var results = engine.process(json);
       if (results.length == 0) {
         return noresults();
       }
 
       var box = $('searchy-results');
 
-      if (defaultEngine.details) {
-        $('searchy-about-results').value = defaultEngine.details(json);
+      if (engine.details) {
+        $('searchy-about-results').value = engine.details(json);
       }
 
-      $('searchy-results-style').innerHTML = defaultEngine.css || '';
+      $('searchy-results-style').innerHTML = engine.css || '';
 
       results.forEach(
         function(result) {
-          var node = defaultEngine.buildResultNode(result);
+          var node = engine.buildResultNode(result);
           box.appendChild(node);
 
           if (!current) {
@@ -283,20 +297,28 @@ var searchy = new function() {
 
           node.onclick = function(event) { visit(this, event); };
         });
-
     }
-  }
-
-  function Request()  {
-    var inst = this;
 
     function urlFor(search) {
+      if (search == '@') return;
 
-//      if ((search[0] == '@') && currentHost()) {
-//        search = search.slice(1) + " site:" + currentHost();
-//      }
+      engine = engines.google; // default
 
-      return defaultEngine.queryUrl(search);
+      if (search[0] == '@') {
+
+        if (search[1] == ' ' && currentHost()) {
+          search = search.slice(1) + " site:" + currentHost();
+        }
+        else {
+          var engineName = search.slice(1).split(' ')[0];
+          if (engineName in engines) {
+            engine = engines[engineName];
+            search = search.slice(engineName.length+2);
+          }
+        }
+      }
+
+      return engine.queryUrl(search);
     }
 
     inst.search = function(query) {
@@ -307,7 +329,7 @@ var searchy = new function() {
       inst.xhr.mozBackgroundRequest = true;
       inst.xhr.open("GET", urlFor(query));
       inst.xhr.setRequestHeader("Referer", "http://overstimulate.com/projects/searchy");
-      inst.xhr.onreadystatechange = process;
+      inst.xhr.onload = process;
       inst.xhr.send(null);
     };
 

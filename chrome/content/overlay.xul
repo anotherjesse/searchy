@@ -30,6 +30,10 @@
             <description>Start typing to search the web, results will appear here</description>
             <description>Use arrow keys to select the result and press enter to visit</description>
             <description>To search within the current site, start your query with @</description>
+            <spacer size="10" />
+            <vbox id="searchy-engines">
+              <description>Custom search engines:</description>
+            </vbox>
           </vbox>
           <spacer flex="1" />
           <vbox>

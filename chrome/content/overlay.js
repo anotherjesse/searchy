@@ -300,8 +300,6 @@ var searchy = new function() {
     }
 
     function urlFor(search) {
-      if (search == '@') return;
-
       engine = engines.google; // default
 
       if (search[0] == '@') {
@@ -318,16 +316,20 @@ var searchy = new function() {
         }
       }
 
+      if (search == '@' || search == '') return;
+
       return engine.queryUrl(search);
     }
 
     inst.search = function(query) {
+      var url = urlFor(query);
+      if (!url) return;
       inst.input = query; // hmm - this is ugly
       inst.abort();
       inst.xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
         .createInstance(Ci.nsIXMLHttpRequest);
       inst.xhr.mozBackgroundRequest = true;
-      inst.xhr.open("GET", urlFor(query));
+      inst.xhr.open("GET", url);
       inst.xhr.setRequestHeader("Referer", "http://overstimulate.com/projects/searchy");
       inst.xhr.onload = process;
       inst.xhr.send(null);

@@ -25,7 +25,7 @@ var searchy = new function() {
     return engine;
   }
 
-  ['google', 'twitter', 'nyt', 'video', 'friendfeed'].forEach(
+  ['google', 'twitter', 'nyt', 'video', 'friendfeed', 'definr'].forEach(
     function(name) {
       engines[name] = LoadEngine('chrome://searchy/content/engines/' + name + '.js');
     });

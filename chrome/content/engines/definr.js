@@ -10,22 +10,21 @@ function queryUrl(search) {
 
 function buildResultNode(result) {
 
-  var word = 
-    document.createElement('label'); 
-    word.setAttribute('class', 'word');
-      word.setAttribute('value', result);
-      word.setAttribute('href', 'http://definr.com/'+result); 
+  var word = document.createElement('label');
+  word.setAttribute('class', 'result');
+  word.setAttribute('value', result);
+  word.setAttribute('href', 'http://definr.com/'+result);
   return word;
 }
 
 function process(json) {
   return json[1];
-}  
+}
 
 
 var css = (<r><![CDATA[
 
-#searchy label.word 
+#searchy .result
 {
   color: #ffffff;
 }

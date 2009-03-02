@@ -9,7 +9,6 @@ function queryUrl(search) {
 }
 
 function buildResultNode(result) {
-
   var word = document.createElement('label');
   word.setAttribute('class', 'result');
   word.setAttribute('value', result);

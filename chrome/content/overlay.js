@@ -15,6 +15,18 @@ var searchy = new function() {
 
   var searchyInputNode;
 
+
+  function LoadEngine(path) {
+    var engine = {};
+    var loader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+      .getService(Ci.mozIJSSubScriptLoader);
+    loader.loadSubScript('chrome://searchy/content/engines/base.js', engine);
+    loader.loadSubScript(path, engine);
+    return engine;
+  }
+
+  engine = LoadEngine('chrome://searchy/content/engines/google.js');
+
   function init() {
     /* add an attribute so we can make sure not to crash on linux */
 
@@ -238,7 +250,7 @@ var searchy = new function() {
       // FIXME: not sure but perhaps queried should change even if noresults
       queried = req.input;
 
-      var results = video.process(json);
+      var results = engine.process(json);
       if (results.length == 0) {
         return noresults();
       }
@@ -247,15 +259,15 @@ var searchy = new function() {
 
       results.forEach(
         function(result) {
-          var node = video.buildResultNode(result);
-          box.appendChild(hbox);
+          var node = engine.buildResultNode(result);
+          box.appendChild(node);
 
           if (!current) {
-            box.setAttribute('current', true);
-            current = box;
+            node.setAttribute('current', true);
+            current = node;
           }
 
-          box.onclick = function(event) { visit(this, event); };
+          node.onclick = function(event) { visit(this, event); };
         });
 
     }
@@ -264,20 +276,13 @@ var searchy = new function() {
   function Request()  {
     var inst = this;
 
-    function currentHost() {
-      try {
-        return gBrowser.selectedBrowser.webNavigation.currentURI.host;
-      }
-      catch (e) {}
-    }
-
     function urlFor(search) {
 
 //      if ((search[0] == '@') && currentHost()) {
 //        search = search.slice(1) + " site:" + currentHost();
 //      }
 
-      return video.queryUrl(search);
+      return engine.queryUrl(search);
     }
 
     inst.search = function(query) {
@@ -293,35 +298,5 @@ var searchy = new function() {
     };
 
     inst.abort = function() { if (inst.xhr) { inst.xhr.abort();} };
-  }
-
-
-  function appendHTMLtoXUL(html, node) {
-    html.split(/<b>(.*?<\/b>)|([^<]*)/).forEach(
-      function(text) {
-        var span = document.createElementNS("http://www.w3.org/1999/xhtml", "html:span");
-        if (text.match(/<\/b>$/)) {
-          span.setAttribute('class', 'bold');
-          text = text.slice(0, text.length - 4);
-        }
-
-        /* FIXME: instead of deleting <wbr>, instead create multiple spans
-         *        so the layout engine can wrap the layout
-         */
-
-        text = text.replace(/<wbr>/g, "");
-
-        // convert XML UTF-16 entities to string characters
-        text = text.replace(/&#(\d+);/g, function() { return String.fromCharCode(RegExp.$1); });
-
-        // convert some of the more popular XML entities in text
-        text = text.replace(/&quot;/g, '"');
-        text = text.replace(/&gt;/g, '>');
-        text = text.replace(/&lt;/g, '<');
-        text = text.replace(/&amp;/g, '&');
-
-        span.appendChild(document.createTextNode(text));
-        node.appendChild(span);
-      });
   }
 };

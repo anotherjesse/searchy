@@ -45,9 +45,33 @@
   border: 1px solid #888;
 }
 
+#searchy .result .title
+{
+  font-size: 1.3em;
+  padding-bottom: 5px;
+  color: #ffa;
+  max-height: 1em;
+  overflow: hidden;
+}
+
 #searchy .result .bold
 {
   font-weight: bold;
+}
+
+#searchy .result .description
+{
+  padding-bottom: 5px;
+}
+
+#searchy .result .url
+{
+  padding-bottom: 5px;
+  color: #08f;
+  text-decoration: underline;
+  max-height: 1em;
+  line-height: 1em;
+  overflow: hidden;
 }
 
 #searchy #searchy-help,
@@ -62,4 +86,30 @@
 {
   color: #f80;
   text-decoration: underline;
+}
+
+#searchy .twitter.result img
+{
+  width: 48px;
+  height: 48px;
+}
+
+#searchy .twitter.result .title
+{
+  overflow: inherit;
+  max-height: inherit;
+  padding-left: 10px;
+}
+
+#searchy .twitter.result img
+{
+  width: 16px;
+  height: 16px;
+}
+
+#searchy .friendfeed.result .title
+{
+  overflow: inherit;
+  max-height: inherit;
+  padding-left: 8px;
 }

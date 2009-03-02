@@ -225,6 +225,7 @@ var searchy = new function() {
     searchyInputNode.removeAttribute('busy');
     $('searchy-no-results').hidden = true;
     $('searchy-help').hidden = true;
+    $('searchy-about-results').value = '';
     $('searchy-about-results').hidden = false;
     var box = $('searchy-results');
     while (box.childNodes.length>0) {
@@ -256,6 +257,10 @@ var searchy = new function() {
       }
 
       var box = $('searchy-results');
+
+      if (engine.details) {
+        $('searchy-about-results').value = engine.details(json);
+      }
 
       results.forEach(
         function(result) {

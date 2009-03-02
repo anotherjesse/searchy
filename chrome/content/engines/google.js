@@ -32,3 +32,7 @@ function process(json) {
   }
   return json.responseData.results;
 }
+
+function details(json) {
+  return "Estimated Results: " + json.responseData.cursor.estimatedResultCount;
+}

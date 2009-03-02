@@ -308,7 +308,7 @@ var searchy = new function() {
           search = search.slice(1) + " site:" + currentHost();
         }
         else {
-          var engineName = search.slice(1).split(' ')[0];
+          var engineName = search.slice(1).split(' ')[0].toLowerCase();
           if (engineName in engines) {
             engine = engines[engineName];
             search = search.slice(engineName.length+2);

@@ -12,7 +12,7 @@ function buildResultNode(result) {
 
   var word = 
     document.createElement('label'); 
-    word.setAttribute('class', 'word');
+    word.setAttribute('class', 'word result');
       word.setAttribute('value', result);
       word.setAttribute('href', 'http://definr.com/'+result); 
   return word;

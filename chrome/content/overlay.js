@@ -15,8 +15,6 @@ var searchy = new function() {
 
   var searchyInputNode;
 
-  c = 0;
-
   function LoadEngine(path) {
     var engine = {};
     var loader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
@@ -26,7 +24,15 @@ var searchy = new function() {
     return engine;
   }
 
-  engine = LoadEngine('chrome://searchy/content/engines/google.js');
+  var engines = {};
+
+  ['google', 'twitter', 'nyt', 'video', 'friendfeed'].forEach(
+    function(name) {
+      engines[name] = LoadEngine('chrome://searchy/content/engines/' + name + '.js');
+
+    });
+
+  var defaultEngine = engines.google;
 
   function init() {
     /* add an attribute so we can make sure not to crash on linux */
@@ -252,22 +258,22 @@ var searchy = new function() {
       // FIXME: not sure but perhaps queried should change even if noresults
       queried = req.input;
 
-      var results = engine.process(json);
+      var results = defaultEngine.process(json);
       if (results.length == 0) {
         return noresults();
       }
 
       var box = $('searchy-results');
 
-      if (engine.details) {
-        $('searchy-about-results').value = engine.details(json);
+      if (defaultEngine.details) {
+        $('searchy-about-results').value = defaultEngine.details(json);
       }
 
-      $('searchy-results-style').innerHTML = engine.css;
+      $('searchy-results-style').innerHTML = defaultEngine.css || '';
 
       results.forEach(
         function(result) {
-          var node = engine.buildResultNode(result);
+          var node = defaultEngine.buildResultNode(result);
           box.appendChild(node);
 
           if (!current) {
@@ -290,7 +296,7 @@ var searchy = new function() {
 //        search = search.slice(1) + " site:" + currentHost();
 //      }
 
-      return engine.queryUrl(search);
+      return defaultEngine.queryUrl(search);
     }
 
     inst.search = function(query) {
